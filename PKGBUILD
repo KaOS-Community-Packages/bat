@@ -1,17 +1,36 @@
 pkgname=bat
-pkgver=0.15.4
+pkgver=0.16.0
 pkgrel=1
 arch=('x86_64')
 pkgdesc='A cat(1) clone with wings (binary release).'
 url='https://github.com/sharkdp/bat'
-license=('APACHE', 'custom:MIT')
-source=("https://github.com/sharkdp/bat/releases/download/v${pkgver}/${pkgname}-v${pkgver}-x86_64-unknown-linux-gnu.tar.gz")
-sha1sums=('2cda9c9e8a891ed65a014d919d8db2f6bce806e3')
+license=('APACHE' 'MIT')
+makedepends=('cmake' 'rust')
+depends=('curl' 'libssh2' 'oniguruma')
+source=(${pkgname}-${pkgver}.tar.gz::"${url}/archive/v${pkgver}.tar.gz")
+sha1sums=('9689bc8bee44593927e95a6176805d01d2697734')
+
+build() {
+	cd "${pkgname}-${pkgver}"
+
+	cargo build --release
+}
 
 package() {
-  cd "${srcdir}/${pkgname}-v${pkgver}-x86_64-unknown-linux-gnu"
-  install -Dm755 ${pkgname} "${pkgdir}/usr/bin/bat"
-  install -Dm644 autocomplete/${pkgname}.fish "${pkgdir}/usr/share/fish/vendor_completions.d/${pkgname}.fish"
-  install -Dm644 LICENSE-MIT "${pkgdir}/usr/share/licenses/$pkgname/LICENSE-MIT"
-  install -Dm644 ${pkgname}.1 "${pkgdir}/usr/share/man/man1/${pkgname}.1"
+	cd "${pkgname}-${pkgver}"
+
+	install -Dm755 "target/release/${pkgname}" "${pkgdir}/usr/bin/${pkgname}"
+	install -Dm644 "assets/manual/bat.1.in" "${pkgdir}/usr/share/man/man1/${pkgname}.1"
+
+	# Completion files
+	#install -Dm644 "assets/completions/bat.bash.in" \
+	#	"${pkgdir}/usr/share/bash-completion/completions/${pkgname}"
+	install -Dm644 "assets/completions/bat.fish.in" \
+		"${pkgdir}/usr/share/fish/vendor_completions.d/${pkgname}.fish"
+	install -Dm644 "assets/completions/bat.zsh.in" \
+		"${pkgdir}/usr/share/zsh/site-functions/_${pkgname}"
+
+	# Licenses
+	install -Dm644 LICENSE-APACHE "${pkgdir}/usr/share/licenses/${pkgname}/APACHE"
+	install -Dm644 LICENSE-MIT "${pkgdir}/usr/share/licenses/${pkgname}/MIT"
 }
