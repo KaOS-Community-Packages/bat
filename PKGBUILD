@@ -1,5 +1,5 @@
 pkgname=bat
-pkgver=0.16.0
+pkgver=0.17.1
 pkgrel=1
 arch=('x86_64')
 pkgdesc='A cat(1) clone with wings (binary release).'
@@ -8,7 +8,7 @@ license=('APACHE' 'MIT')
 makedepends=('cmake' 'rust')
 depends=('curl' 'libssh2' 'oniguruma')
 source=(${pkgname}-${pkgver}.tar.gz::"${url}/archive/v${pkgver}.tar.gz")
-sha1sums=('9689bc8bee44593927e95a6176805d01d2697734')
+sha1sums=('404f12cde9da1f26ab5d221eb0e7d29a887d6efc')
 
 build() {
 	cd "${pkgname}-${pkgver}"
