@@ -1,14 +1,14 @@
 pkgname=bat
-pkgver=0.21.0
+pkgver=0.22.0
 pkgrel=1
 arch=('x86_64')
 pkgdesc='A cat(1) clone with wings (binary release).'
 url='https://github.com/sharkdp/bat'
 license=('APACHE' 'MIT')
 makedepends=('cmake' 'rust')
-depends=('curl' 'libssh2' 'oniguruma')
+depends=('curl' 'libssh2' 'oniguruma' 'libgit2')
 source=(${pkgname}-${pkgver}.tar.gz::"${url}/archive/v${pkgver}.tar.gz")
-sha1sums=('8ddd0bda35c50c4256b7c0ed2285630e87d92f77')
+sha1sums=('be45ddeb6907ce88c9e2f0e57def7f77bafeb2a9')
 
 build() {
 	cd "${pkgname}-${pkgver}"
