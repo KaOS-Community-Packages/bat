@@ -1,6 +1,11 @@
-bat
-====
+# Bat
 
-A cat(1) clone with wings.
+Cat clone with syntax highlighting and git integration. \   
+Bat supports syntax highlighting for a large number of programming and markup languages.
 
-URL: https://github.com/sharkdp/bat
+##### SOURCE: https://github.com/sharkdp/bat
+
+#### Install:
+```
+kcp -i bat
+```
