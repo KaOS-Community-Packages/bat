@@ -1,36 +1,53 @@
 pkgname=bat
 pkgver=0.22.1
 pkgrel=1
+pkgdesc='Cat clone with syntax highlighting and git integration | Bat supports syntax highlighting for a large number of programming and markup languages'
 arch=('x86_64')
-pkgdesc='A cat(1) clone with wings (binary release).'
 url='https://github.com/sharkdp/bat'
 license=('APACHE' 'MIT')
-makedepends=('cmake' 'rust')
-depends=('curl' 'libssh2' 'oniguruma' 'libgit2')
-source=(${pkgname}-${pkgver}.tar.gz::"${url}/archive/v${pkgver}.tar.gz")
-sha1sums=('517a26fb4c873ff95eb18faf339ca3a443ed5684')
+depends=('curl' 'libgit2' 'libssh' 'libssh2' 'oniguruma')
+makedepends=('clang' 'cmake' 'git' 'rust')
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/sharkdp/$pkgname/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+prepare() {
+  cargo fetch --locked --manifest-path $pkgname-$pkgver/Cargo.toml
+}
 
 build() {
-	cd "${pkgname}-${pkgver}"
+  cargo build --locked --manifest-path $pkgname-$pkgver/Cargo.toml --release
+}
 
-	cargo build --release
+check() {
+  cargo test --locked --manifest-path $pkgname-$pkgver/Cargo.toml
 }
 
 package() {
-	cd "${pkgname}-${pkgver}"
+  export CFLAGS+=' -ffat-lto-objects -w'
+  install -Dm755 $pkgname-$pkgver/target/release/$pkgname "$pkgdir/usr/bin/$pkgname"
 
-	install -Dm755 "target/release/${pkgname}" "${pkgdir}/usr/bin/${pkgname}"
-	install -Dm644 "assets/manual/bat.1.in" "${pkgdir}/usr/share/man/man1/${pkgname}.1"
+  cd $pkgname-$pkgver/target/release/build
 
-	# Completion files
-	#install -Dm644 "assets/completions/bat.bash.in" \
-	#	"${pkgdir}/usr/share/bash-completion/completions/${pkgname}"
-	install -Dm644 "assets/completions/bat.fish.in" \
-		"${pkgdir}/usr/share/fish/vendor_completions.d/${pkgname}.fish"
-	install -Dm644 "assets/completions/bat.zsh.in" \
-		"${pkgdir}/usr/share/zsh/site-functions/_${pkgname}"
+  # Find and package the man page (because cargo --out-dir is too new)
+  find . -name bat.1 -type f -exec install -Dm644 {} \
+    "$pkgdir/usr/share/man/man1/bat.1" \;
 
-	# Licenses
-	install -Dm644 LICENSE-APACHE "${pkgdir}/usr/share/licenses/${pkgname}/APACHE"
-	install -Dm644 LICENSE-MIT "${pkgdir}/usr/share/licenses/${pkgname}/MIT"
+  # Find and package the bash completion file
+  find . -name bat.bash -type f -exec install -Dm644 {} \
+    "$pkgdir/usr/share/bash-completion/completions/bat" \;
+
+  # Find and package the zsh completion file (not in zsh-completions yet)
+  find . -name bat.zsh -type f -exec install -Dm644 {} \
+    "$pkgdir/usr/share/zsh/site-functions/_bat" \;
+
+  # Find and package the fish completion file
+  find . -name bat.fish -type f -exec install -Dm644 {} \
+    "$pkgdir/usr/share/fish/vendor_completions.d/bat.fish" \;
+
+
+  # Package licenses
+  install -Dm644 $srcdir/$pkgname-$pkgver/LICENSE-APACHE \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE-APACHE"
+  install -Dm644 $srcdir/$pkgname-$pkgver/LICENSE-MIT \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE-MIT"
 }
