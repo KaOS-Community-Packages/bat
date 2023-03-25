@@ -1,18 +1,14 @@
 pkgname=bat
-pkgver=0.22.1
+pkgver=0.23.0
 pkgrel=1
 pkgdesc='Cat clone with syntax highlighting and git integration | Bat supports syntax highlighting for a large number of programming and markup languages'
 arch=('x86_64')
 url='https://github.com/sharkdp/bat'
 license=('APACHE' 'MIT')
-depends=('curl' 'libgit2' 'libssh' 'libssh2' 'oniguruma')
-makedepends=('clang' 'cmake' 'git' 'rust')
-source=("${pkgname}-${pkgver}.tar.gz::https://github.com/sharkdp/$pkgname/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('SKIP')
-
-prepare() {
-  cargo fetch --locked --manifest-path $pkgname-$pkgver/Cargo.toml
-}
+makedepends=('cmake' 'rust')
+depends=('curl' 'libssh2' 'oniguruma' 'libgit2')
+source=(${pkgname}-${pkgver}.tar.gz::"${url}/archive/v${pkgver}.tar.gz")
+sha1sums=('467b68e3302c7aca185472e8ccc67d5604be8ff0')
 
 build() {
   cargo build --locked --manifest-path $pkgname-$pkgver/Cargo.toml --release
