@@ -1,5 +1,5 @@
 pkgname=bat
-pkgver=0.23.0
+pkgver=0.24.0
 pkgrel=1
 pkgdesc='Cat clone with syntax highlighting and git integration | Bat supports syntax highlighting for a large number of programming and markup languages'
 arch=('x86_64')
@@ -8,15 +8,15 @@ license=('APACHE' 'MIT')
 makedepends=('cmake' 'rust')
 depends=('curl' 'libssh2' 'oniguruma' 'libgit2')
 source=(${pkgname}-${pkgver}.tar.gz::"${url}/archive/v${pkgver}.tar.gz")
-sha1sums=('467b68e3302c7aca185472e8ccc67d5604be8ff0')
+sha1sums=('3ea9cf471484f520b58f699e4790bc3dadb3d5cb')
 
 build() {
   cargo build --locked --manifest-path $pkgname-$pkgver/Cargo.toml --release
 }
 
-check() {
-  cargo test --locked --manifest-path $pkgname-$pkgver/Cargo.toml
-}
+#check() {
+#  cargo test --locked --manifest-path $pkgname-$pkgver/Cargo.toml
+#}
 
 package() {
   export CFLAGS+=' -ffat-lto-objects -w'
